@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"strconv"
+
 	"sigs.k8s.io/yaml"
 
 	"github.com/vito/go-interact/interact"
@@ -92,18 +94,16 @@ func (atcConfig ATCConfig) Set(yamlTemplateWithParams templatehelpers.YamlTempla
 		return err
 	}
 
-	updatedConfig, found, err := atcConfig.Team.Pipeline(atcConfig.PipelineRef)
+	updatedPipeline, _, err := atcConfig.Team.Pipeline(atcConfig.PipelineRef)
 	if err != nil {
 		return err
 	}
-
-	paused := found && updatedConfig.Paused
 
 	if len(warnings) > 0 {
 		displayhelpers.ShowWarnings(warnings)
 	}
 
-	atcConfig.showPipelineUpdateResult(created, updated, paused)
+	atcConfig.showPipelineUpdateResult(updatedPipeline, created, updated)
 	return nil
 }
 
@@ -111,7 +111,7 @@ func (atcConfig ATCConfig) UnpausePipelineCommand() string {
 	return fmt.Sprintf("%s -t %s unpause-pipeline -p %s", os.Args[0], atcConfig.TargetName, atcConfig.PipelineRef.String())
 }
 
-func (atcConfig ATCConfig) showPipelineUpdateResult(created bool, updated bool, paused bool) {
+func (atcConfig ATCConfig) showPipelineUpdateResult(pipeline atc.Pipeline, created bool, updated bool) {
 	if updated {
 		fmt.Println("configuration updated")
 	} else if created {
@@ -121,11 +121,7 @@ func (atcConfig ATCConfig) showPipelineUpdateResult(created bool, updated bool, 
 			fmt.Println("Could not parse targetURL")
 		}
 
-		queryParams := atcConfig.PipelineRef.QueryParams().Encode()
-		if queryParams != "" {
-			queryParams = "?" + queryParams
-		}
-		pipelineURL, err := url.Parse("/teams/" + atcConfig.Team.Name() + "/pipelines/" + atcConfig.PipelineRef.Name + queryParams)
+		pipelineURL, err := url.Parse("/pipelines/" + strconv.Itoa(pipeline.ID))
 		if err != nil {
 			fmt.Println("Could not parse pipelineURL")
 		}
@@ -136,7 +132,7 @@ func (atcConfig ATCConfig) showPipelineUpdateResult(created bool, updated bool, 
 		panic("Something really went wrong!")
 	}
 
-	if paused {
+	if pipeline.Paused {
 		fmt.Println("")
 		fmt.Println("the pipeline is currently paused. to unpause, either:")
 		fmt.Println("  - run the unpause-pipeline command:")

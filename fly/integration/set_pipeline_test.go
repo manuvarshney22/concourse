@@ -1183,7 +1183,7 @@ this is super secure
 
 			Context("when the pipeline is paused", func() {
 				AssertSuccessWithPausedPipelineHelp := func(expectCreationMessage bool) {
-					It("succeeds and prints an error message to help the user", func() {
+					It("succeeds and prints a message to help the user", func() {
 						Expect(func() {
 							flyCmd := exec.Command(flyPath, "-t", targetName, "set-pipeline", "-p", "awesome-pipeline", "-c", configFile.Name())
 
@@ -1197,7 +1197,7 @@ this is super secure
 							yes(stdin)
 
 							if expectCreationMessage {
-								pipelineURL := urljoiner.Join(atcServer.URL(), "teams/main/pipelines", "awesome-pipeline")
+								pipelineURL := urljoiner.Join(atcServer.URL(), "pipelines/1")
 
 								Eventually(sess).Should(gbytes.Say("pipeline created!"))
 								Eventually(sess).Should(gbytes.Say(fmt.Sprintf("you can view your pipeline here: %s", pipelineURL)))
@@ -1215,8 +1215,8 @@ this is super secure
 						}).By(4))
 					})
 				}
-				
-				Context("when updating an existing pipeline", func(){
+
+				Context("when updating an existing pipeline", func() {
 					BeforeEach(func() {
 						path, err := atc.Routes.CreatePathForRoute(atc.SaveConfig, rata.Params{"pipeline_name": "awesome-pipeline", "team_name": "main"})
 						Expect(err).NotTo(HaveOccurred())
@@ -1234,8 +1234,8 @@ this is super secure
 						))
 
 						atcServer.RouteToHandler("GET", path_get, ghttp.RespondWithJSONEncoded(http.StatusOK,
-							atc.Pipeline{Name: "awesome-pipeline", Paused: true, TeamName: "main"}))
-						
+							atc.Pipeline{ID: 1, Name: "awesome-pipeline", Paused: true, TeamName: "main"}))
+
 						config.Resources[0].Name = "updated-name"
 					})
 
@@ -1260,8 +1260,8 @@ this is super secure
 						))
 
 						atcServer.RouteToHandler("GET", path_get, ghttp.RespondWithJSONEncoded(http.StatusOK,
-							atc.Pipeline{Name: "awesome-pipeline", Paused: true, TeamName: "main"}))
-						
+							atc.Pipeline{ID: 1, Name: "awesome-pipeline", Paused: true, TeamName: "main"}))
+
 						config.Resources[0].Name = "updated-name"
 					})
 
