@@ -56,6 +56,7 @@ var _ = Describe("cc.xml", func() {
 					var fakePipeline *dbfakes.FakePipeline
 					BeforeEach(func() {
 						fakePipeline = new(dbfakes.FakePipeline)
+						fakePipeline.IDReturns(1)
 						fakeTeam.PipelinesReturns([]db.Pipeline{
 							fakePipeline,
 						}, nil)
@@ -69,6 +70,7 @@ var _ = Describe("cc.xml", func() {
 									Name:         "some-job",
 									PipelineName: "something-else",
 									TeamName:     "a-team",
+									PipelineID:   1,
 								},
 							}, nil)
 
@@ -81,6 +83,7 @@ var _ = Describe("cc.xml", func() {
 									{
 										Name:         "some-job",
 										PipelineName: "something-else",
+										PipelineID:   1,
 										TeamName:     "a-team",
 										FinishedBuild: &atc.BuildSummary{
 											Name:    "42",
@@ -108,7 +111,7 @@ var _ = Describe("cc.xml", func() {
 
 								Expect(body).To(MatchXML(`
 <Projects>
-  <Project activity="Sleeping" lastBuildLabel="42" lastBuildStatus="Success" lastBuildTime="2018-11-04T21:26:38Z" name="something-else/some-job" webUrl="https://example.com/teams/a-team/pipelines/something-else/jobs/some-job"/>
+  <Project activity="Sleeping" lastBuildLabel="42" lastBuildStatus="Success" lastBuildTime="2018-11-04T21:26:38Z" name="something-else/some-job" webUrl="https://example.com/pipelines/1/jobs/some-job"/>
 </Projects>
 `))
 							})
@@ -120,6 +123,7 @@ var _ = Describe("cc.xml", func() {
 									{
 										Name:         "some-job",
 										PipelineName: "something-else",
+										PipelineID:   1,
 										TeamName:     "a-team",
 										FinishedBuild: &atc.BuildSummary{
 											Name:    "42",
@@ -136,7 +140,7 @@ var _ = Describe("cc.xml", func() {
 
 								Expect(body).To(MatchXML(`
 <Projects>
-  <Project activity="Sleeping" lastBuildLabel="42" lastBuildStatus="Exception" lastBuildTime="2018-11-04T21:26:38Z" name="something-else/some-job" webUrl="https://example.com/teams/a-team/pipelines/something-else/jobs/some-job"/>
+  <Project activity="Sleeping" lastBuildLabel="42" lastBuildStatus="Exception" lastBuildTime="2018-11-04T21:26:38Z" name="something-else/some-job" webUrl="https://example.com/pipelines/1/jobs/some-job"/>
 </Projects>
 `))
 							})
@@ -148,6 +152,7 @@ var _ = Describe("cc.xml", func() {
 									{
 										Name:         "some-job",
 										PipelineName: "something-else",
+										PipelineID:   1,
 										TeamName:     "a-team",
 										FinishedBuild: &atc.BuildSummary{
 											Name:    "42",
@@ -164,7 +169,7 @@ var _ = Describe("cc.xml", func() {
 
 								Expect(body).To(MatchXML(`
 <Projects>
-  <Project activity="Sleeping" lastBuildLabel="42" lastBuildStatus="Exception" lastBuildTime="2018-11-04T21:26:38Z" name="something-else/some-job" webUrl="https://example.com/teams/a-team/pipelines/something-else/jobs/some-job"/>
+  <Project activity="Sleeping" lastBuildLabel="42" lastBuildStatus="Exception" lastBuildTime="2018-11-04T21:26:38Z" name="something-else/some-job" webUrl="https://example.com/pipelines/1/jobs/some-job"/>
 </Projects>
 `))
 							})
@@ -176,6 +181,7 @@ var _ = Describe("cc.xml", func() {
 									{
 										Name:         "some-job",
 										PipelineName: "something-else",
+										PipelineID:   1,
 										TeamName:     "a-team",
 										FinishedBuild: &atc.BuildSummary{
 											Name:    "42",
@@ -192,7 +198,7 @@ var _ = Describe("cc.xml", func() {
 
 								Expect(body).To(MatchXML(`
 <Projects>
-  <Project activity="Sleeping" lastBuildLabel="42" lastBuildStatus="Failure" lastBuildTime="2018-11-04T21:26:38Z" name="something-else/some-job" webUrl="https://example.com/teams/a-team/pipelines/something-else/jobs/some-job"/>
+  <Project activity="Sleeping" lastBuildLabel="42" lastBuildStatus="Failure" lastBuildTime="2018-11-04T21:26:38Z" name="something-else/some-job" webUrl="https://example.com/pipelines/1/jobs/some-job"/>
 </Projects>
 `))
 							})
@@ -204,6 +210,7 @@ var _ = Describe("cc.xml", func() {
 									{
 										Name:         "some-job",
 										PipelineName: "something-else",
+										PipelineID:   1,
 										TeamName:     "a-team",
 										FinishedBuild: &atc.BuildSummary{
 											Name:    "42",
@@ -221,7 +228,7 @@ var _ = Describe("cc.xml", func() {
 
 								Expect(body).To(MatchXML(`
 <Projects>
-  <Project activity="Building" lastBuildLabel="42" lastBuildStatus="Success" lastBuildTime="2018-11-04T21:26:38Z" name="something-else/some-job" webUrl="https://example.com/teams/a-team/pipelines/something-else/jobs/some-job"/>
+  <Project activity="Building" lastBuildLabel="42" lastBuildStatus="Success" lastBuildTime="2018-11-04T21:26:38Z" name="something-else/some-job" webUrl="https://example.com/pipelines/1/jobs/some-job"/>
 </Projects>
 `))
 							})

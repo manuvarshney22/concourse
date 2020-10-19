@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 	"time"
 
 	"code.cloudfoundry.org/lager"
@@ -110,21 +111,17 @@ func (s *Server) buildProject(j atc.JobSummary) Project {
 		LastBuildStatus: lastBuildStatus,
 		LastBuildTime:   time.Unix(j.FinishedBuild.EndTime, 0).UTC().Format(time.RFC3339),
 		Name:            fmt.Sprintf("%s/%s", pipelineRef.String(), j.Name),
-		WebUrl:          s.createWebUrl(j.TeamName, j.Name, pipelineRef),
+		WebUrl:          s.createWebUrl(j.PipelineID, j.Name),
 	}
 }
 
-func (s *Server) createWebUrl(teamName, jobName string, pipelineRef atc.PipelineRef) string {
+func (s *Server) createWebUrl(pipelineID int, jobName string) string {
 	externalURL, err := url.Parse(s.externalURL)
 	if err != nil {
 		fmt.Println("Could not parse externalURL")
 	}
 
-	queryParams := pipelineRef.QueryParams().Encode()
-	if queryParams != "" {
-		queryParams = "?" + queryParams
-	}
-	pipelineURL, err := url.Parse("/teams/" + teamName + "/pipelines/" + pipelineRef.Name + "/jobs/" + jobName + queryParams)
+	pipelineURL, err := url.Parse("/pipelines/" + strconv.Itoa(pipelineID) + "/jobs/" + jobName)
 	if err != nil {
 		fmt.Println("Could not parse pipelineURL")
 	}
